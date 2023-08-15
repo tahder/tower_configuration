@@ -8,6 +8,11 @@ on:
         description: The version to pull of awx
         required: true
         type: string
+      gh_ref:
+        description: The ref in the repository to pull
+        required: false
+        default: devel
+        type: string
 env:
   # Run docker-compose up in the background
   COMPOSE_UP_OPTS: -d
@@ -17,17 +22,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+        with:
+          ref: ${{ gh_ref }}
 
-      - name: "Checkout galaxy_ng"
+      - name: Checkout AWX
         uses: actions/checkout@v2
         with:
           repository: ansible/awx
           path: awx
           ref: ${{ inputs.awx_version }}
 
-      - uses: actions/setup-python@v2
+      - uses: actions/setup-python@v4
         with:
-          python-version: "3.8"
+          python-version: "3.11"
 
       - name: Update apt
         run: sudo apt -y update
@@ -36,13 +43,17 @@ jobs:
         run: sudo apt-get install -y libsasl2-dev python3-dev libldap2-dev libssl-dev build-essential
 
       - name: Install docker-compose
-        run: pip3 install --upgrade docker-compose
+        run: pip3 install --upgrade docker-compose pyyaml==5.3.1
 
       - name: collect system info
         run: whoami; id; pwd; ls -al; uname -a ; df -h .; mount ; cat /etc/issue; docker --version ; ps aux | fgrep -i docker; ls -al /var/run/containerd/containerd.sock
 
       - name: set the awx password in the inventory
         run: echo "admin_password='password'" >> awx/tools/docker-compose/inventory
+
+      - name: Find and replace dependency
+        run: sed -i 's,rsyslog-8.2102.0-106.el9 ,https://download.copr.fedorainfracloud.org/results/ansible/Rsyslog/epel-9-x86_64/06076718-rsyslog/rsyslog-8.2102.0-106.el9.x86_64.rpm ,' tools/ansible/roles/dockerfile/templates/Dockerfile.j2
+        working-directory: awx
 
       - name: build images
         working-directory: awx
@@ -55,6 +66,9 @@ jobs:
 
       - name: give some time to spin up
         run: sleep 30
+
+      - name: Move ansible.cfg to root
+        run: mv .github/files/ansible.cfg .
 
       - name: Display Versions
         run: which python && pip --version && ansible --version

@@ -67,6 +67,7 @@ This also speeds up the overall role.
 |`controller_configuration_role_async_retries`|`{{ controller_configuration_async_retries }}`|no|This variable sets the number of retries to attempt for the role.|
 |`controller_configuration_async_delay`|1|no|This sets the delay between retries for the role globally.|
 |`controller_configuration_role_async_delay`|`controller_configuration_async_delay`|no|This sets the delay between retries for the role.|
+|`controller_configuration_async_dir`|`null`|no|Sets the directory to write the results file for async tasks. The default value is set to `null` which uses the Ansible Default of `/root/.ansible_async/`.|
 
 ## Data Structure
 
@@ -75,7 +76,10 @@ This also speeds up the overall role.
 |Variable Name|Default Value|Required|Type|Description|
 |:---:|:---:|:---:|:---:|:---:|
 |`user`|""|no|str|The user for which the role applies|
+|`users`|""|no|list|The users for which the role applies|
 |`team`|""|no|str|The team for which the role applies|
+|`teams`|""|no|list|The teams for which the role applies|
+|`roles`|""|no|str (see note below)|The roles which are applied to one of {`target_team`, `inventory`, `job_template`, `target_team`, `inventory`, `job_template`} for either `user` or `team` |
 |`role`|""|no|str (see note below)|The role which is applied to one of {`target_team`, `inventory`, `job_template`, `target_team`, `inventory`, `job_template`} for either `user` or `team` |
 |`target_team`|""|no|str|The team the role applies against|
 |`target_teams`|""|no|list|The teams the role applies against|
@@ -92,11 +96,12 @@ This also speeds up the overall role.
 |`lookup_organization`|""|no|str|Organization the inventories, job templates, projects, or workflows the items exists in. Used to help lookup the object, for organization roles see organization. If not provided, will lookup by name only, which does not work with duplicates.|
 |`project`|""|no|str|The project the role applies against|
 |`projects`|""|no|list|The project the role applies against|
+|`instance_groups`|""|no|list|The instance groups the role applies against|
 |`state`|`present`|no|str|Desired state of the resource.|
 
 #### Role
 
-`role` must be one of the following:
+`role` must be one of the following (or roles must contain a list made up from the following):
 
 - `admin`
 - `read`
@@ -113,6 +118,8 @@ This also speeds up the overall role.
 - `notification_admin`
 - `job_template_admin`
 
+Note that the `roles` option takes precedence over the `role` option and simply allows to specify multiple roles for a user or team (or set of users or teams).
+
 ### Standard RBAC Data Structure
 
 #### Json Example
@@ -128,23 +135,31 @@ This also speeds up the overall role.
     {
       "team": "My Team",
       "organization": "Default",
-      "role": "execute"
+      "roles": [
+        "execute",
+        "read"
+      ]
     }
   ]
 }
 ```
 
-#### Yaml Example
+git check
 
 ```yaml
 ---
 controller_roles:
 - user: jdoe
+  users:
+    - thing1
+    - thing2
   target_team: "My Team"
   role: member
 - team: "My Team"
   organization: "Default"
-  role: execute
+  roles:
+    - execute
+    - read
 ```
 
 ## Playbook Examples
