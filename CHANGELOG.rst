@@ -1,9 +1,73 @@
-============================================
-infra.controller_configuration Release Notes
-============================================
+=============================================
+infra.controller\_configuration Release Notes
+=============================================
 
 .. contents:: Topics
 
+v2.7.1
+======
+
+Minor Changes
+-------------
+
+- Add `assign_notification_templates_to_org` option to organization role to allow conditional assigning of notification templates
+- Updated dispatch role with `assign_notification_templates_to_org` option assigned to organization as False on first run and True on second run by default.
+- instance role - add missing arguments introduced in ansible.controller 4.5.0 or awx.awx 23.0.0
+
+Bugfixes
+--------
+
+- Constructed inventories can only be exported when AAP version is >= 4.5.0
+- Fixed roles diff when the role is set at the organization level for an user/team
+- Fixed roles diff when the roles are provided as a list, in a single entry
+- Organization not defined when exporting some inventory sources from Tower 3.7.2
+
+v2.6.0
+======
+
+Minor Changes
+-------------
+
+- The role 'filetree_create' will now allow to export all the objects of one kind into a single file, so it can be loaded by both ansible `group_vars` syntax and `filetree_read` tool.
+- added improvements to checkmod where it will run faster with the async tasks. In addition added an additional fail check at end of dispatch that will likely fail if dependencies are missing, as expected.
+- added mandatory check to workflow launch name option
+- filetree_create - Add the constructed inventory exportation fields from the API endpoint `api/v2/constructed_inventories`
+
+Bugfixes
+--------
+
+- Fixed an issue where the diff doesn't work correctly when explicitly setting state present
+- Fixed an issue where the usage access to instance_groups were removed
+- Fixed member removal of teams
+- The role 'credentials' have had the enforced defaults removed from team, user, and organization options. This was causing an error with these parameters were mutally exclusive.
+- The role 'inventory_sources' will now skip when the source parameter is `constructed`. These sources are auto created and not meant to be edited. However they can still be synced with the inventory_source_update.
+- The role 'workflow_job_templates' Default enforced value set for workflow templates limit was 0, was corrected to be an empty string.
+
+v2.5.2
+======
+
+Bugfixes
+--------
+
+- Fixed issue with organization creation with instance group. Execute instance and instance_group before organizations.
+- dispatch - Fixed the order and behavior to run as a single task with options for organization behavior.
+- filetree_create - Fixed the misspelled variable name that caused exported job_templates yaml files containing incorrect name.
+- filetree_create and object_diff- Subelement filter is executed before when and it was causing a failure when the list was not defined.
+
+v2.5.1
+======
+
+Minor Changes
+-------------
+
+- Adds request_timeout to controller_export_diff module, and roles
+- licence role now uses a boolean of controller_license.use_looup to determine whether to lookup subscriptions. A lookup is only needed to refresh the available pools, or if it has never been done. See Role Readme for details.
+
+Bugfixes
+--------
+
+- Fixed issue with licence role not operating properly, when a controller never had credentials provided for subscription lookup. See Role Readme for proper usuage.
+- Fixed issue with organization role not acceppting default environments option correctly.
 
 v2.5.0
 ======

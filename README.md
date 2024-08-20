@@ -1,11 +1,19 @@
 # Red Hat Communities of Practice Controller Configuration Collection
 
 ![pre-commit tests](https://github.com/redhat-cop/controller_configuration/actions/workflows/pre-commit.yml/badge.svg)
-![Galaxy Release](https://github.com/redhat-cop/controller_configuration/workflows/galaxy-release/badge.svg)
-<!-- markdownlint-disable-line MD033 MD034 --><a href="https://raw.githubusercontent.com/redhat-cop/controller_configuration/devel/docs/aap_config_as_code_public_meeting.ics"><img border="0" src="https://www.google.com/calendar/images/ext/gc_button1_en-GB.gif"></a>
+![Release](https://github.com/redhat-cop/controller_configuration/actions/workflows/release.yml/badge.svg)
+<!-- markdownlint-disable-line MD033 MD034 --><a href="https://raw.githubusercontent.com/redhat-cop/controller_configuration/devel/docs/aap_config_as_code_public_meeting.ics"><img border="0" alt="Google Calendar invite" src="https://www.google.com/calendar/images/ext/gc_button1_en-GB.gif"></a>
 <!-- Further CI badges go here as above -->
 
 This Ansible collection allows for easy interaction with an AWX or Ansible Controller server via Ansible roles using the AWX/Controller collection modules.
+
+## Getting Help
+
+We are on the Ansible Forums and Matrix, if you want to discuss something, ask for help, or participate in the community, please use the #infra-config-as-code tag on the fourm, or post to the chat in Matrix.
+
+[Ansible Forums](https://forum.ansible.com/tag/infra-config-as-code)
+
+[Matrix Chat Room](https://matrix.to/#/#aap_config_as_code:ansible.com)
 
 ## Requirements
 
@@ -17,7 +25,7 @@ The awx.awx or ansible.controller collections MUST be installed in order for thi
   hosts: localhost
   connection: local
   vars:
-    controller_validate_certs: false
+    controller_validate_certs: true
   collections:
     - awx.awx
 ```
@@ -81,7 +89,7 @@ Otherwise it will look for the modules only in your base installation. If there 
   hosts: localhost
   connection: local
   vars:
-    controller_validate_certs: false
+    controller_validate_certs: true
   collections:
     - awx.awx
 ```
@@ -142,6 +150,7 @@ The input data can be organized in a very flexible way, letting the user use any
 ### Controller Export
 
 The awx command line can export json that is compatible with this collection.
+In addition there is an awx.awx/ansible.controller export module that use the awx command line to export.
 More details can be found [here](EXPORT_README.md)
 
 ### Template Example
@@ -176,7 +185,7 @@ More information about contributing can be found in our [Contribution Guidelines
 We have a community meeting every 4 weeks. Find the agenda in the [issues](https://github.com/redhat-cop/controller_configuration/issues) and the calendar invitation below:
 
 <!-- markdownlint-disable-next-line MD033 MD034 -->
-<a target="_blank" href="https://raw.githubusercontent.com/redhat-cop/controller_configuration/devel/docs/aap_config_as_code_public_meeting.ics"><img border="0" src="https://www.google.com/calendar/images/ext/gc_button1_en-GB.gif"></a>
+<a target="_blank" href="https://raw.githubusercontent.com/redhat-cop/controller_configuration/devel/docs/aap_config_as_code_public_meeting.ics"><img border="0" alt="Google Calendar invite" src="https://www.google.com/calendar/images/ext/gc_button1_en-GB.gif"></a>
 
 ## Code of Conduct
 
@@ -188,4 +197,4 @@ Please read and familiarize yourself with this document.
 
 GNU General Public License v3.0 or later.
 
-See [LICENSE](https://www.gnu.org/licenses/gpl-3.0.txt) to see the full text.
+See [LICENSE](LICENSE) to see the full text.

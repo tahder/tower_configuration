@@ -29,12 +29,14 @@
     controller_username:     "{{ controller_username | default(omit, true) }}"
     controller_password:     "{{ controller_password | default(omit, true) }}"
     controller_oauthtoken:   "{{ controller_oauthtoken | default(omit, true) }}"
+    request_timeout:         "{{ controller_request_timeout | default(omit, true) }}"
     controller_host:         "{{ controller_hostname | default(omit, true) }}"
     controller_config_file:  "{{ controller_config_file | default(omit, true) }}"
     validate_certs:     "{{ controller_validate_certs | default(omit) }}"
   loop: "{{ controller_launch_jobs }}"
   loop_control:
     loop_var: "__job_launch_item"
+    label: "{{ (__job_launch_item.organization | default('<no_org>')) }}/{{ __job_launch_item.name }}"
   no_log: "{{ controller_configuration_job_launch_secure_logging }}"
   register: launched_controller_jobs
   when: controller_launch_jobs is defined

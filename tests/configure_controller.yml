@@ -108,7 +108,6 @@
         controller_bulk_hosts: "{{ temp_controller_bulk_hosts }}"
       when:
         - controller_bulk_launch_jobs is defined
-        - awx_version == "21.14.0" or awx_version == "devel"
 
     - name: Launch Controller Jobs
       ansible.builtin.include_role:
@@ -150,7 +149,6 @@
             wait: false
       when:
         - controller_bulk_launch_jobs is defined
-        - awx_version == "21.14.0" or awx_version == "22.0.0" or awx_version == "22.1.0" or awx_version == "devel"
 
     - name: Launch Controller workflows
       ansible.builtin.include_role:
@@ -170,9 +168,9 @@
         controller_password:     "{{ controller_password }}"
         controller_host:         "{{ controller_hostname }}"
         validate_certs:          "{{ controller_validate_certs }}"
-      ignore_errors: true  ## noqa ignore-errors
+      ignore_errors: true  # noqa ignore-errors
 
-    - name: Get the organization ID
+    - name: "Get the organization ID"
       ansible.builtin.set_fact:
         controller_organization_id: "{{ lookup(controller_api_plugin, 'organizations', query_params={'name': 'Default'}, host=controller_hostname, username=controller_username, password=controller_password, verify_ssl=false) }}"
 

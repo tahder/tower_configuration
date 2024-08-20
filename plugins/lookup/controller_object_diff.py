@@ -69,14 +69,14 @@ EXAMPLES = """
   set_fact:
     project_difference: "{{ query('infra.controller_configuration.controller_object_diff',
       api_list=controller_api_results, compare_list=differential_item.differential_test_items,
-      with_present=true, set_absent=true ) }}"
+      with_present=true, set_absent=true) }}"
 
 - name: Add Projects
   include_role:
     name: infra.controller_configuration.projects
   vars:
     controller_projects: "{{ project_difference }}"
-
+...
 """
 
 RETURN = """
@@ -116,10 +116,15 @@ class LookupModule(LookupBase):
 
     def map_item(self, item, new_attribute_name, attribute_value, dupitems):
         new_item = copy.deepcopy(item)
-        new_item.update({new_attribute_name: attribute_value})
         for dupitem in [dupitem for dupitem in dupitems if dupitem in new_item]:
             new_item.pop(dupitem)
+        new_item.update({new_attribute_name: attribute_value})
         return new_item
+
+    def equal_dicts(self, d1, d2, ignore_keys):
+        d1_filtered = {k: v for k, v in d1.items() if k not in ignore_keys}
+        d2_filtered = {k: v for k, v in d2.items() if k not in ignore_keys}
+        return d1_filtered == d2_filtered
 
     def run(self, terms, variables=None, **kwargs):
         self.set_options(direct=kwargs)
@@ -224,7 +229,9 @@ class LookupModule(LookupBase):
             for item in api_list_reduced:
                 if item["resource_type"] == "organization":
                     item.update({"organizations": [item[item["resource_type"]]]})
-                item.update({"role": item["name"].lower().replace(" ", "_")})
+                if item["resource_type"] == "instance_group":
+                    item.update({"instance_groups": [item[item["resource_type"]]]})
+                item.update({"role": item["name"].lower().replace(" ", "_").replace("ad_hoc", "adhoc").replace("approve", "approval")})
                 # Remove the extra fields
                 item.pop("users")
                 item.pop("teams")
@@ -232,6 +239,8 @@ class LookupModule(LookupBase):
                 item.pop("resource_type")
                 if "organization" in item:
                     item.pop("organization")
+                if "instance_group" in item:
+                    item.pop("instance_group")
                 if "type" in item:
                     item.pop("type")
             list_to_extend = []
@@ -292,6 +301,21 @@ class LookupModule(LookupBase):
             for item in list_to_remove:
                 compare_list_reduced.remove(item)
             compare_list_reduced.extend(list_to_extend)
+            # Expand all compare list elements when roles is provided as list
+            list_to_extend.clear()
+            list_to_remove.clear()
+            for item in compare_list_reduced:
+                expanded = False
+                dupitems = ["roles", "role"]
+                if "roles" in item:
+                    for role in item["roles"]:
+                        list_to_extend.append(self.map_item(item, "role", role, dupitems))
+                    expanded = True
+                if expanded:
+                    list_to_remove.append(item)
+            for item in list_to_remove:
+                compare_list_reduced.remove(item)
+            compare_list_reduced.extend(list_to_extend)
         elif (
             api_list[0]["type"] != "organization"
             and api_list[0]["type"] != "user"
@@ -312,16 +336,29 @@ class LookupModule(LookupBase):
         else:
             difference = []
             for item in api_list_reduced:
-                if item not in compare_list_reduced:
+                for compare_item in compare_list_reduced:
+                    if self.equal_dicts(compare_item, item, "state"):
+                        break
+                    elif (
+                        ("organization" in compare_item)  # permission applies to all objects in orga
+                        and (len(compare_item) == 3)  # we only have orga, team/user, and role
+                        and self.equal_dicts(compare_item, item, ["organization"] + list(item.keys() - compare_item.keys()))
+                    ):
+                        break
+                else:
                     difference.append(item)
 
         # Set
         if self.get_option("set_absent"):
             for item in difference:
                 item.update({"state": "absent"})
+                if "team" in item and item["role"] == "member":
+                    item.update({"target_team": item["team"]})
+                    item.pop("team")
+
         # Combine Lists
         if self.get_option("with_present"):
-            for item in compare_list_reduced:
+            for item in compare_list:
                 item.update({"state": "present"})
             compare_list.extend(difference)
             # Return Compare list with difference attached

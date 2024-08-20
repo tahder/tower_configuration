@@ -2,7 +2,7 @@
 
 ## Description
 
-An Ansible role to create inventory sources on Ansible Controller.
+An Ansible Role to create/update/remove inventory sources on Ansible Controller.
 
 ## Requirements
 
@@ -14,8 +14,6 @@ Currently:
 
 ## Variables
 
-### Authentication
-
 |Variable Name|Default Value|Required|Description|Example|
 |:---|:---:|:---:|:---|:---|
 |`controller_state`|"present"|no|The state all objects will take unless overridden by object default|'absent'|
@@ -23,7 +21,8 @@ Currently:
 |`controller_validate_certs`|`True`|no|Whether or not to validate the Ansible Controller Server's SSL certificate.||
 |`controller_username`|""|no|Admin User on the Ansible Controller Server. Either username / password or oauthtoken need to be specified.||
 |`controller_password`|""|no|Controller Admin User's password on the Ansible Controller Server. This should be stored in an Ansible Vault at vars/controller-secrets.yml or elsewhere and called from a parent playbook. Either username / password or oauthtoken need to be specified.||
-|`controller_oauthtoken`|""|no|Controller Admin User's token on the Ansible Controller Server. This should be stored in an Ansible Vault at or elsewhere and called from a parent playbook. Either username / password or oauthtoken need to be specified.|||
+|`controller_oauthtoken`|""|no|Controller Admin User's token on the Ansible Controller Server. This should be stored in an Ansible Vault at or elsewhere and called from a parent playbook. Either username / password or oauthtoken need to be specified.||
+|`controller_request_timeout`|`10`|no|Specify the timeout in seconds Ansible should use in requests to the controller host.||
 |`controller_inventory_sources`|`see below`|yes|Data structure describing your inventory sources Described below. Alias: inventory_sources ||
 
 ### Enforcing defaults
@@ -67,6 +66,8 @@ This also speeds up the overall role.
 |`controller_configuration_inventory_sources_async_retries`|`{{ controller_configuration_async_retries }}`|no|This variable sets the number of retries to attempt for the role.|
 |`controller_configuration_async_delay`|1|no|This sets the delay between retries for the role globally.|
 |`controller_configuration_inventory_sources_async_delay`|`controller_configuration_async_delay`|no|This sets the delay between retries for the role.|
+|`controller_configuration_loop_delay`|0|no|This sets the pause between each item in the loop for the roles globally. To help when API is getting overloaded.|
+|`controller_configuration_inventory_loop_delay`|`controller_configuration_loop_delay`|no|This sets the pause between each item in the loop for the role. To help when API is getting overloaded.|
 |`controller_configuration_async_dir`|`null`|no|Sets the directory to write the results file for async tasks. The default value is set to `null` which uses the Ansible Default of `/root/.ansible_async/`.|
 
 ### Formating Variables
@@ -100,7 +101,7 @@ The role will strip the double space between the curly bracket in order to provi
 |`description`|`False`|no|The description to use for the inventory source.|
 |`inventory`|""|yes|Inventory the group should be made a member of.|
 |`organization`|""|no|Organization the inventory belongs to.|
-|`source`|""|no|The source to use for this group.|
+|`source`|""|no|The source to use for this group. If set to `constructed` this role will be skipped as they are not meant to be edited.|
 |`source_path`|""|no|For an SCM based inventory source, the source path points to the file within the repo to use as an inventory.|
 |`source_vars`|""|no|The variables or environment fields to apply to this source type.|
 |`enabled_var`|""|no|The variable to use to determine enabled state e.g., "status.power_state".|
@@ -186,7 +187,7 @@ controller_inventory_sources:
 
 ## License
 
-[MIT](https://github.com/redhat-cop/controller_configuration#licensing)
+[GPL-3.0](https://github.com/redhat-cop/controller_configuration#licensing)
 
 ## Author
 

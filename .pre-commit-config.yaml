@@ -1,20 +1,12 @@
 ---
 repos:
   - repo: 'https://github.com/pre-commit/pre-commit-hooks'
-    rev: v4.4.0
+    rev: v4.6.0
     hooks:
       - id: end-of-file-fixer
       - id: trailing-whitespace
-  # Disabling the separate yamllint as it can now be done by ansible-lint with our config moved to TLD.
-  # - repo: 'https://github.com/adrienverge/yamllint.git'
-  #   rev: v1.26.3
-  #   hooks:
-  #     - id: yamllint
-  #       entry: yamllint -c .github/workflow-config/.yamllint.yml
-  #       types:
-  #         - yaml
   - repo: 'https://github.com/ansible-community/ansible-lint.git'
-    rev: v6.17.2
+    rev: v24.7.0
     hooks:
       # see discussions here about what arguments are used, and behavior
       # https://github.com/ansible/ansible-lint/issues/649
@@ -27,14 +19,14 @@ repos:
         args:
           - "--profile=production"
         additional_dependencies:
-          - "ansible-core>=2.13"
+          - "ansible-core>=2.15"
           - "yamllint>=1.26,<2.0"
   - repo: https://github.com/DavidAnson/markdownlint-cli2
-    rev: v0.8.1
+    rev: v0.13.0
     hooks:
       - id: markdownlint-cli2
   - repo: https://github.com/ambv/black
-    rev: 23.7.0
+    rev: 24.4.2
     hooks:
       - id: black
         name: black
@@ -42,7 +34,7 @@ repos:
         args: [--config=.black.cfg, --check, --diff]
         types: [python]
   - repo: https://github.com/pycqa/flake8
-    rev: 6.1.0
+    rev: 7.1.0
     hooks:
       - id: flake8
         name: flake8

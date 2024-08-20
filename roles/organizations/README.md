@@ -2,7 +2,7 @@
 
 ## Description
 
-An Ansible Role to create Organizations on Ansible Controller.
+An Ansible Role to create/update/remove Organizations on Ansible Controller.
 
 ## Requirements
 
@@ -14,17 +14,20 @@ Currently:
 
 ## Variables
 
-### Authentication
-
 |Variable Name|Default Value|Required|Description|Example|
 |:---|:---:|:---:|:---|:---|
 |`controller_state`|"present"|no|The state all objects will take unless overridden by object default|'absent'|
 |`controller_hostname`|""|yes|URL to the Ansible Controller Server.|127.0.0.1|
-|`controller_validate_certs`|`True`|no|Whether or not to validate the Ansible Controller Server's SSL certificate.||
+|`controller_validate_certs`|`true`|no|Whether or not to validate the Ansible Controller Server's SSL certificate.||
 |`controller_username`|""|no|Admin User on the Ansible Controller Server. Either username / password or oauthtoken need to be specified.||
 |`controller_password`|""|no|Controller Admin User's password on the Ansible Controller Server. This should be stored in an Ansible Vault at vars/controller-secrets.yml or elsewhere and called from a parent playbook. Either username / password or oauthtoken need to be specified.||
-|`controller_oauthtoken`|""|no|Controller Admin User's token on the Ansible Controller Server. This should be stored in an Ansible Vault at or elsewhere and called from a parent playbook. Either username / password or oauthtoken need to be specified.|||
+|`controller_oauthtoken`|""|no|Controller Admin User's token on the Ansible Controller Server. This should be stored in an Ansible Vault at or elsewhere and called from a parent playbook. Either username / password or oauthtoken need to be specified.||
+|`controller_request_timeout`|`10`|no|Specify the timeout in seconds Ansible should use in requests to the controller host.||
 |`controller_organizations`|`see below`|yes|Data structure describing your organization or organizations Described below. Alias: organizations ||
+|`assign_galaxy_credentials_to_org`|`true`|no|Boolean to indicate whether credentials should be assigned or not. It should be noted that credentials must exist before adding it. The dispatch role will set this to `false`, before re-running the role with it set to `true`. ||
+|`assign_default_ee_to_org`|`true`|no|Boolean to indicate whether default execution environment should be assigned or not. It should be noted that execution environment must exist before adding it. The dispatch role will set this to `false`, before re-running the role with it set to `true`. ||
+|`assign_notification_templates_to_org`|`true`|no|Boolean to indicate whether notification templates should be assigned or not. It should be noted that the templates must exist before adding them. The dispatch role will set this to `false`, before re-running the role with it set to `true`. ||
+|`assign_instance_groups_to_org`|`true`|no|Boolean to indicate whether an instance group should be assigned or not. It should be noted that the instance group must exist before adding it. ||
 
 ### Enforcing defaults
 
@@ -67,6 +70,8 @@ This also speeds up the overall role.
 |`controller_configuration_organizations_async_retries`|`{{ controller_configuration_async_retries }}`|no|This variable sets the number of retries to attempt for the role.|
 |`controller_configuration_async_delay`|1|no|This sets the delay between retries for the role globally.|
 |`controller_configuration_organizations_async_delay`|`controller_configuration_async_delay`|no|This sets the delay between retries for the role.|
+|`controller_configuration_loop_delay`|0|no|This sets the pause between each item in the loop for the roles globally. To help when API is getting overloaded.|
+|`controller_configuration_organizations_loop_delay`|`controller_configuration_loop_delay`|no|This sets the pause between each item in the loop for the role. To help when API is getting overloaded.|
 |`controller_configuration_async_dir`|`null`|no|Sets the directory to write the results file for async tasks. The default value is set to `null` which uses the Ansible Default of `/root/.ansible_async/`.|
 
 ## Organization Data Structure
@@ -78,6 +83,7 @@ This role accepts two data models. A simple straightforward easy to maintain mod
 |Variable Name|Default Value|Required|Type|Description|
 |:---:|:---:|:---:|:---:|:---:|
 |`name`|""|yes|str|Name of Organization|
+|`new_name`|""|no|str|New name of Organization|
 |`description`|`False`|no|str|Description of  of Organization.|
 |`custom_virtualenv`|""|no|str|Local absolute file path containing a custom Python virtualenv to use.|
 |`max_hosts`|""|no|int|The max hosts allowed in this organization.|
@@ -89,8 +95,6 @@ This role accepts two data models. A simple straightforward easy to maintain mod
 |`notification_templates_error`|""|no|list|The notifications on error to use for this organization in a list.|
 |`notification_templates_approvals`|""|no|list|The notifications for approval to use for this organization in a list.|
 |`state`|`present`|no|str|Desired state of the resource.|
-|`assign_galaxy_credentials_to_org`|`True`|no|bool|Boolean to indicate whether credentials should be assigned or not. It should be noted that credentials must exist before adding it. |
-|`assign_default_ee_to_org`|`True`|no|bool|Boolean to indicate whether default execution environment should be assigned or not. It should be noted that execution environment must exist before adding it. |
 
 ### Standard Organization Data Structure model
 
@@ -185,7 +189,7 @@ controller_organizations:
 
 ## License
 
-[MIT](https://github.com/redhat-cop/controller_configuration#licensing)
+[GPL-3.0](https://github.com/redhat-cop/controller_configuration#licensing)
 
 ## Author
 

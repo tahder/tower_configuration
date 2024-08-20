@@ -1,10 +1,11 @@
+{% if (current_schedule_index | default(0)) == 0 %}
 ---
 controller_schedules:
+{% endif %}
   - name: "{{ current_schedules_asset_value.name }}"
 {% if current_schedules_asset_value.description is defined %}
     description: "{{ current_schedules_asset_value.description }}"
 {% endif %}
-    organization: "ToDo: The schedule '{{ current_schedules_asset_value.name }}' must have an organization"
     enabled: {{ current_schedules_asset_value.enabled }}
     unified_job_template: "{{ current_schedules_asset_value.summary_fields.unified_job_template.name }}"
 {% if current_schedules_asset_value.summary_fields.inventory is defined %}
@@ -72,9 +73,11 @@ controller_schedules:
     limit: "{{ current_schedules_asset_value.limit }}"
 {% endif %}
 {% if current_schedules_asset_value.diff_mode is defined and current_schedules_asset_value.diff_mode | type_debug != "NoneType" %}
-    diff_mode: {{ current_schedules_asset_value.diff_mode | bool }}
+    diff_mode: {{ current_schedules_asset_value.diff_mode | bool | lower }}
 {% endif %}
 {% if current_schedules_asset_value.verbosity is defined %}
     verbosity: {{ current_schedules_asset_value.verbosity | int }}
 {% endif %}
+{% if last_schedule | default(true) | bool %}
 ...
+{% endif %}

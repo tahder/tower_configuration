@@ -19,6 +19,8 @@ Each role has its own variables, for information on those please see each role w
 ```yaml
 controller_configuration_dispatcher_roles:
   - {role: settings, var: controller_settings, tags: settings}
+  - {role: instances, var: controller_instances, tags: instances}
+  - {role: instance_groups, var: controller_instance_groups, tags: instance_groups}
   - {role: organizations, var: controller_organizations, tags: organizations}
   - {role: labels, var: controller_labels, tags: labels}
   - {role: users, var: controller_user_accounts, tags: users}
@@ -26,21 +28,23 @@ controller_configuration_dispatcher_roles:
   - {role: credential_types, var: controller_credential_types, tags: credential_types}
   - {role: credentials, var: controller_credentials, tags: credentials}
   - {role: credential_input_sources, var: controller_credential_input_sources, tags: credential_input_sources}
-  - {role: notification_templates, var: controller_notifications, tags: notification_templates}
-  - {role: projects, var: controller_projects, tags: projects}
   - {role: execution_environments, var: controller_execution_environments, tags: execution_environments}
-  - {role: applications, var: controller_applications, tags: applications}
+  - {role: notification_templates, var: controller_notifications, tags: notification_templates}
+  - {role: organizations, var: controller_organizations, tags: organizations} # Rerunning with additional dependant values set to be added to the org
+  - {role: projects, var: controller_projects, tags: projects}
   - {role: inventories, var: controller_inventories, tags: inventories}
-  - {role: instance_groups, var: controller_instance_groups, tags: instance_groups}
-  - {role: project_update, var: controller_projects, tags: projects}
   - {role: inventory_sources, var: controller_inventory_sources, tags: inventory_sources}
   - {role: inventory_source_update, var: controller_inventory_sources, tags: inventory_sources}
+  - {role: applications, var: controller_applications, tags: applications}
   - {role: hosts, var: controller_hosts, tags: hosts}
+  - {role: bulk_host_create, var: controller_bulk_hosts, tags: bulk_hosts}
   - {role: groups, var: controller_groups, tags: inventories}
   - {role: job_templates, var: controller_templates, tags: job_templates}
   - {role: workflow_job_templates, var: controller_workflows, tags: workflow_job_templates}
   - {role: schedules, var: controller_schedules, tags: schedules}
   - {role: roles, var: controller_roles, tags: roles}
+  - {role: job_launch, var: controller_launch_jobs, tags: job_launch}
+  - {role: workflow_launch, var: controller_workflow_launch_jobs, tags: workflow_launch}
 ```
 
 Note that each item has three elements:
@@ -61,6 +65,7 @@ It is possible to redefine this variable with a subset of roles or with differen
 |`controller_username`|""|no|Admin User on the Ansible Controller Server. Either username / password or oauthtoken need to be specified.||
 |`controller_password`|""|no|Controller Admin User's password on the Ansible Controller Server. This should be stored in an Ansible Vault at vars/controller-secrets.yml or elsewhere and called from a parent playbook. Either username / password or oauthtoken need to be specified.||
 |`controller_oauthtoken`|""|no|Controller Admin User's token on the Ansible Controller Server. This should be stored in an Ansible Vault at or elsewhere and called from a parent playbook. Either username / password or oauthtoken need to be specified.||
+|`controller_request_timeout`|`10`|no|Specify the timeout in seconds Ansible should use in requests to the controller host.||
 
 ### Secure Logging Variables
 
@@ -108,7 +113,7 @@ This also speeds up the overall role. Each individual role has its own variable 
 
 ## License
 
-[MIT](https://github.com/redhat-cop/controller_configuration#licensing)
+[GPL-3.0](https://github.com/redhat-cop/controller_configuration#licensing)
 
 ## Author
 

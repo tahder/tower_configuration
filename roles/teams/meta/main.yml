@@ -16,9 +16,9 @@ galaxy_info:
   # - GPLv3
   # - Apache
   # - CC-BY
-  license: "MIT"
+  license: GPL-3.0-or-later
 
-  min_ansible_version: "2.4"
+  min_ansible_version: 2.15.0
 
   # If this a Container Enabled role, provide the minimum Ansible Container version.
   # min_ansible_container_version:
@@ -68,7 +68,8 @@ collections:
   - ansible.controller
   - awx.awx
 
-dependencies: []
-# List your role dependencies here, one per line. Be sure to remove the '[]' above,
-# if you add dependencies to this list.
+dependencies:
+  # List your role dependencies here, one per line. Be sure to remove the '[]' above,
+  # if you add dependencies to this list.
+  - role: global_vars
 ...

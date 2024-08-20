@@ -2,7 +2,7 @@
 
 ## Description
 
-An Ansible Role to create Credentials on Ansible Controller.
+An Ansible Role to create/update/remove Credentials on Ansible Controller.
 
 ## Requirements
 
@@ -14,8 +14,6 @@ Currently:
 
 ## Variables
 
-### Authentication
-
 |Variable Name|Default Value|Required|Description|Example|
 |:---|:---:|:---:|:---|:---|
 |`controller_state`|"present"|no|The state all objects will take unless overridden by object default|'absent'|
@@ -24,6 +22,7 @@ Currently:
 |`controller_username`|""|no|Admin User on the Ansible Controller Server. Either username / password or oauthtoken need to be specified.||
 |`controller_password`|""|no|Controller Admin User's password on the Ansible Controller Server. This should be stored in an Ansible Vault at vars/controller-secrets.yml or elsewhere and called from a parent playbook. Either username / password or oauthtoken need to be specified.||
 |`controller_oauthtoken`|""|no|Controller Admin User's token on the Ansible Controller Server. This should be stored in an Ansible Vault at or elsewhere and called from a parent playbook. Either username / password or oauthtoken need to be specified.||
+|`controller_request_timeout`|`10`|no|Specify the timeout in seconds Ansible should use in requests to the controller host.||
 |`controller_credentials`|`see below`|yes|Data structure describing your credentials Described below. Alias: credentials ||
 
 ### Enforcing defaults
@@ -67,6 +66,8 @@ This also speeds up the overall role.
 |`controller_configuration_credentials_async_retries`|`{{ controller_configuration_async_retries }}`|no|This variable sets the number of retries to attempt for the role.|
 |`controller_configuration_async_delay`|1|no|This sets the delay between retries for the role globally.|
 |`controller_configuration_credentials_async_delay`|`controller_configuration_async_delay`|no|This sets the delay between retries for the role.|
+|`controller_configuration_loop_delay`|0|no|This sets the pause between each item in the loop for the roles globally. To help when API is getting overloaded.|
+|`controller_configuration_credentials_loop_delay`|`controller_configuration_loop_delay`|no|This sets the pause between each item in the loop for the role. To help when API is getting overloaded.|
 |`controller_configuration_async_dir`|`null`|no|Sets the directory to write the results file for async tasks. The default value is set to `null` which uses the Ansible Default of `/root/.ansible_async/`.|
 
 ## Data Structure
@@ -85,36 +86,18 @@ This also speeds up the overall role.
 |`user`|""|no|User that should own this credential. If provided, do not give either team or organization. |
 |`team`|""|no|Team that should own this credential. If provided, do not give either user or organization. |
 |`state`|`present`|no|Desired state of the resource.|
-|`update_secrets`|true|no|bool| True will always change password if user specifies password, even if API gives $encrypted$ for password. False will only set the password if other values change too.|
+|`update_secrets`|true|no| True will always change password if user specifies password, even if API gives $encrypted$ for password. False will only set the password if other values change too.|
 
 ### Credential types
 
-|Credential types|
-|:---:|
-|Amazon Web Services|
-|Controller|
-|GitHub Personal Access Token|
-|GitLab Personal Access Token|
-|Google Compute Engine|
-|Insights|
-|Machine|
-|Microsoft Azure Resource Manager|
-|Network|
-|OpenShift or Kubernetes API Bearer Token|
-|OpenStack|
-|Red Hat CloudForms|
-|Red Hat Satellite 6|
-|Red Hat Virtualization|
-|Source Control|
-|Vault|
-|VMware vCenter|
+To get a list of all the available builtin credential types, checkout the ansible doc's link [here](https://docs.ansible.com/automation-controller/latest/html/userguide/credentials.html#credential-types)
 
-### Standard Organization Data Structure
+### Standard Credential Data Structure
 
 #### Json Example
 
 ```json
----
+
 {
     "controller_credentials": [
       {
@@ -177,7 +160,7 @@ controller_credentials:
 
 ## License
 
-[MIT](https://github.com/redhat-cop/controller_configuration#licensing)
+[GPL-3.0](https://github.com/redhat-cop/controller_configuration#licensing)
 
 ## Author
 

@@ -14,8 +14,6 @@ Currently:
 
 ## Variables
 
-### Authentication
-
 |Variable Name|Default Value|Required|Description|Example|
 |:---|:---:|:---:|:---|:---|
 |`controller_state`|"present"|no|The state all objects will take unless overridden by object default|'absent'|
@@ -24,6 +22,7 @@ Currently:
 |`controller_username`|""|no|Admin User on the Ansible Controller Server. Either username / password or oauthtoken need to be specified.||
 |`controller_password`|""|no|Controller Admin User's password on the Ansible Controller Server. This should be stored in an Ansible Vault at vars/controller-secrets.yml or elsewhere and called from a parent playbook. Either username / password or oauthtoken need to be specified.||
 |`controller_oauthtoken`|""|no|Controller Admin User's token on the Ansible Controller Server. This should be stored in an Ansible Vault at or elsewhere and called from a parent playbook. Either username / password or oauthtoken need to be specified.||
+|`controller_request_timeout`|`10`|no|Specify the timeout in seconds Ansible should use in requests to the controller host.||
 |`controller_ad_hoc_commands_cancel`|`see below`|yes|Data structure describing your ad hoc jobs to cancel Described below.||
 
 ### Secure Logging Variables
@@ -49,7 +48,7 @@ controller_configuration_ad_hoc_command_secure_logging defaults to the value of 
 |`interval`|1|no|int|The interval in seconds, to request an update from.|
 |`timeout`|0|no|int|Maximum time in seconds to wait for a job to finish, 0 means wait until it is finished regardless.|
 
-### Standard Project Data Structure
+### Standard Ad Hoc Command Cancel Data Structure
 
 #### Yaml Example
 
@@ -92,7 +91,7 @@ controller_ad_hoc_commands_cancel:
 
 ## License
 
-[MIT](https://github.com/redhat-cop/controller_configuration#licensing)
+[GPL-3.0](https://github.com/redhat-cop/controller_configuration#licensing)
 
 ## Author
 

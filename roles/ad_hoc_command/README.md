@@ -14,8 +14,6 @@ Currently:
 
 ## Variables
 
-### Authentication
-
 |Variable Name|Default Value|Required|Description|Example|
 |:---|:---:|:---:|:---|:---|
 |`controller_state`|"present"|no|The state all objects will take unless overridden by object default|'absent'|
@@ -24,6 +22,7 @@ Currently:
 |`controller_username`|""|no|Admin User on the Ansible Controller Server. Either username / password or oauthtoken need to be specified.||
 |`controller_password`|""|no|Controller Admin User's password on the Ansible Controller Server. This should be stored in an Ansible Vault at vars/controller-secrets.yml or elsewhere and called from a parent playbook. Either username / password or oauthtoken need to be specified.||
 |`controller_oauthtoken`|""|no|Controller Admin User's token on the Ansible Controller Server. This should be stored in an Ansible Vault at or elsewhere and called from a parent playbook. Either username / password or oauthtoken need to be specified.||
+|`controller_request_timeout`|`10`|no|Specify the timeout in seconds Ansible should use in requests to the controller host.||
 |`controller_ad_hoc_commands`|`see below`|yes|Data structure describing your ad hoc commands to run Described below.||
 
 ### Secure Logging Variables
@@ -60,7 +59,7 @@ controller_configuration_ad_hoc_command_secure_logging defaults to the value of 
 |`interval`|2|no|int|The interval to request an update from controller.|
 |`timeout`|""|no|int|If waiting for the command to complete this will abort after this amount of seconds.|
 
-### Standard Project Data Structure
+### Standard Ad Hoc Command Data Structure
 
 #### Yaml Example
 
@@ -101,7 +100,7 @@ controller_ad_hoc_commands:
 
 ## License
 
-[MIT](https://github.com/redhat-cop/controller_configuration#licensing)
+[GPL-3.0](https://github.com/redhat-cop/controller_configuration#licensing)
 
 ## Author
 
